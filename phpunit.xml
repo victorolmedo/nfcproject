@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         colors="true"
+>
+    <testsuites>
+        <testsuite name="Unit">
+            <directory>tests/Unit</directory>
+        </testsuite>
+        <testsuite name="Feature">
+            <directory>tests/Feature</directory>
+        </testsuite>
+    </testsuites>
+    <source>
+        <include>
+            <directory>app</directory>
+        </include>
+    </source>
+    <php>
+        <env name="APP_ENV" value="testing"/>
+        <env name="APP_MAINTENANCE_DRIVER" value="file"/>
+        <env name="BCRYPT_ROUNDS" value="4"/>
+        <env name="BROADCAST_CONNECTION" value="null"/>
+        <env name="CACHE_STORE" value="array"/>
+        <env name="MAIL_MAILER" value="array"/>
+        <env name="QUEUE_CONNECTION" value="sync"/>
+        <env name="SESSION_DRIVER" value="array"/>
+        <env name="PULSE_ENABLED" value="false"/>
+        <env name="TELESCOPE_ENABLED" value="false"/>
+        <env name="NIGHTWATCH_ENABLED" value="false"/>
+
+        <!--
+            Los tests corren contra PostgreSQL, no contra SQLite.
+
+            No es una preferencia: el esquema depende de PostgreSQL de forma
+            constitutiva. Usa `jsonb`, `ulid`, `timestampTz`, indices parciales,
+            CHECK constraints y, sobre todo, Row Level Security. Una suite que
+            corre en SQLite y otra en PostgreSQL son dos suites distintas, y la que
+            corre en produccion es la que importa. Correr en SQLite daria verde
+            tests sobre un motor que nunca vera una fila real.
+
+            Se usa una base separada (`loyaltypass_testing`) para que un fallo
+            destructivo de un test no pueda tocar datos de desarrollo.
+        -->
+        <env name="DB_CONNECTION" value="pgsql"/>
+        <env name="DB_HOST" value="127.0.0.1"/>
+        <env name="DB_PORT" value="5432"/>
+        <env name="DB_DATABASE" value="loyaltypass_testing"/>
+        <env name="DB_USERNAME" value="loyaltypass"/>
+        <env name="DB_PASSWORD" value="loyaltypass"/>
+        <env name="DB_URL" value=""/>
+
+        <!-- La resolucion por subdominio no aplica en tests: se testea aislada. -->
+        <env name="LOYALTYPASS_TENANT_DRIVER" value="header"/>
+    </php>
+</phpunit>
